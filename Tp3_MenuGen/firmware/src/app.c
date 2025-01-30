@@ -8,7 +8,7 @@
     app.c
 
   Summary:
-    This file contains the source code for the MPLAB Harmony application.
+     Pour Tp3 Menu et generateur de signal .
 
   Description:
     This file contains the source code for the MPLAB Harmony application.  It 
@@ -54,6 +54,11 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 
 #include "app.h"
+#include "Mc32DriverLcd.h"
+#include "Mc32gestSpiDac.h"
+#include "MenuGen.h"
+#include "GesPec12.h"
+#include "Generateur.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -77,6 +82,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 */
 
 APP_DATA appData;
+S_ParamGen LocalParamGen;
+
 
 // *****************************************************************************
 // *****************************************************************************
@@ -84,15 +91,15 @@ APP_DATA appData;
 // *****************************************************************************
 // *****************************************************************************
 
-/* TODO:  Add any necessary callback functions.
+/* TODO:  Add any necessary callback funtions.
 */
+
 
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Local Functions
 // *****************************************************************************
 // *****************************************************************************
-
 
 /* TODO:  Add any necessary local functions.
 */
@@ -116,7 +123,6 @@ void APP_Initialize ( void )
 {
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
-
     
     /* TODO: Initialize your application's state machine and other
      * parameters.
@@ -134,32 +140,50 @@ void APP_Initialize ( void )
 
 void APP_Tasks ( void )
 {
-
     /* Check the application's current state. */
     switch ( appData.state )
     {
         /* Application's initial state. */
         case APP_STATE_INIT:
         {
-            bool appInitialized = true;
-       
-        
-            if (appInitialized)
-            {
+            lcd_init();
+            lcd_bl_on();
+
+            // Init SPI DAC
+            SPI_InitLTC2604();
+
+            // Initialisation PEC12
+            Pec12Init();
+
+            // Initialisation du menu
+            MENU_Initialize(&LocalParamGen);
+
+            // Initialisation du generateur
+            GENSIG_Initialize(&LocalParamGen);
             
-                appData.state = APP_STATE_SERVICE_TASKS;
-            }
+            printf_lcd("Tp3 GenSig 24-25");
+            // A adapter pour les 2 noms sur 2 lignes
+            lcd_gotoxy(1,2);
+            printf_lcd("Clauzel ");
+
+            // Active les timers 
+            DRV_TMR0_Start();
+            DRV_TMR1_Start();
+            appData.state = APP_STATE_WAIT;
             break;
         }
+        case APP_STATE_WAIT :
+          // nothing to do
+        break;
 
-        case APP_STATE_SERVICE_TASKS:
-        {
-        
-            break;
-        }
+       case APP_STATE_SERVICE_TASKS:
+            BSP_LEDToggle(BSP_LED_2);
 
+            // Execution du menu
+            MENU_Execute(&LocalParamGen);
+            appData.state = APP_STATE_WAIT;
+         break;
         /* TODO: implement your application state machine.*/
-        
 
         /* The default state should never be executed. */
         default:
@@ -170,8 +194,38 @@ void APP_Tasks ( void )
     }
 }
 
- 
+void APP_UpdateState ( APP_STATES NewState )
+{
+    appData.state = NewState;
+}
+void APP_Timer1CallBack(void) {
 
+    static int16_t cntCycles =0;
+    //ScanPec12(state A, State b stace PB)
+    LED1_W = !LED1_R;
+  
+    // compteur qui gere le temps d'init
+    cntCycles++;
+    if (cntCycles >= TEMP_INIT) 
+    {
+        
+        cntCycles = (TEMP_INIT - TEMP_DELAY);
+        APP_UpdateState(APP_STATE_SERVICE_TASKS);
+    }
+
+
+}
+void APP_Timer3CallBack(void) {
+
+    LED0_W = 1;
+    GENSIG_Execute();
+    LED0_W = 0;
+  
+    
+
+
+}
 /*******************************************************************************
  End of File
  */
+

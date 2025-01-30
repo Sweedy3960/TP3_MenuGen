@@ -8,7 +8,7 @@
     app.h
 
   Summary:
-    This header file provides prototypes and definitions for the application.
+    Pour Tp3 Menu et generateur de signal .
 
   Description:
     This header file provides function prototypes and data type definitions for
@@ -46,6 +46,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #ifndef _APP_H
 #define _APP_H
 
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Included Files
@@ -59,13 +60,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "system_config.h"
 #include "system_definitions.h"
 
-// DOM-IGNORE-BEGIN
-#ifdef __cplusplus  // Provide C++ Compatibility
-
-extern "C" {
-
-#endif
-// DOM-IGNORE-END 
+#include "DefMenuGen.h"     // paramètres du génerateur
 
 // *****************************************************************************
 // *****************************************************************************
@@ -88,10 +83,9 @@ typedef enum
 {
 	/* Application's state machine's initial state. */
 	APP_STATE_INIT=0,
-	APP_STATE_SERVICE_TASKS,
-
-	/* TODO: Define states used by the application state machine. */
-
+        APP_STATE_WAIT=1,
+        APP_STATE_SERVICE_TASKS=2
+	
 } APP_STATES;
 
 
@@ -115,9 +109,11 @@ typedef struct
 
     /* TODO: Define any additional data used by the application. */
 
+
 } APP_DATA;
 
-
+#define TEMP_INIT 3000
+#define TEMP_DELAY 10
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Callback Routines
@@ -125,6 +121,7 @@ typedef struct
 // *****************************************************************************
 /* These routines are called by drivers when certain events occur.
 */
+
 	
 // *****************************************************************************
 // *****************************************************************************
@@ -164,7 +161,8 @@ typedef struct
 */
 
 void APP_Initialize ( void );
-
+void APP_Timer1CallBack(void);
+void APP_Timer3CallBack(void);
 
 /*******************************************************************************
   Function:
@@ -196,17 +194,10 @@ void APP_Initialize ( void );
     This routine must be called from SYS_Tasks() routine.
  */
 
-void APP_Tasks( void );
-
+void APP_Tasks ( void );
+void APP_UpdateState ( APP_STATES NewState  ) ;
 
 #endif /* _APP_H */
-
-//DOM-IGNORE-BEGIN
-#ifdef __cplusplus
-}
-#endif
-//DOM-IGNORE-END
-
 /*******************************************************************************
  End of File
  */
