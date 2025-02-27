@@ -16,6 +16,9 @@
 
 typedef enum  { SignalSinus, SignalTriangle, SignalDentDeScie, SignalCarre } E_FormesSignal;
 
+typedef enum  { Selector, FormeSet, FreqSet,Offset7,Save } E_Menu;
+
+
 // Structure des paramètres du générateur
 typedef struct {
       E_FormesSignal Forme;

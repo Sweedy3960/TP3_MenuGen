@@ -178,7 +178,10 @@ void APP_Tasks ( void )
 
        case APP_STATE_SERVICE_TASKS:
             BSP_LEDToggle(BSP_LED_2);
-
+            //test du pec12
+            ScanPec12(PEC12_A,PEC12_B,PEC12_PB);
+            
+            //printf_lcd("inc %d, dec %d",Pec12.Inc,Pec12.Dec);
             // Execution du menu
             MENU_Execute(&LocalParamGen);
             appData.state = APP_STATE_WAIT;

@@ -10,17 +10,25 @@
 #include <stdbool.h>
 #include "MenuGen.h"
 
+static int8_t s_menu=Selector;
+static int8_t s_menu_copy;
 
 // Initialisation du menu et des paramètres
 void MENU_Initialize(S_ParamGen *pParam)
 {
-    
 }
 
 
 // Execution du menu, appel cyclique depuis l'application
 void MENU_Execute(S_ParamGen *pParam)
 {
+    switch(s_menu)
+    {
+        case : 
+        break;
+    
+    
+    }
 }
 
 
