@@ -14,9 +14,11 @@
 #include "DefMenuGen.h"
 #include "Mc32gestSpiDac.h"
 #include "driver/tmr/drv_tmr.h"
-
+#include "math.h"
 // T.P. 2016 100 echantillons
 #define MAX_ECH 100
+#define VALUE 3/65536 
+
 char tablEch[100] = {0};
 
 // Initialisation du  générateur
@@ -51,7 +53,7 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
         for(i=0;i<MAX_ECH;i++)
         {
             //Calcul d chaque échantillon test des valeurs limites à faire
-           // tablEch[i] = (>)? :   ;
+            //tablEch[i] = sin( i * 2 *M_PI )*VALUE;
         }
         break;
     case SignalTriangle:

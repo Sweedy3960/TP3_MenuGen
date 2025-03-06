@@ -80,6 +80,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
     
     Application strings and buffers are be defined outside this structure.
 */
+#define C1 1 
+#define L1 1
+#define L2 2
 
 APP_DATA appData;
 S_ParamGen LocalParamGen;
@@ -163,7 +166,7 @@ void APP_Tasks ( void )
             
             printf_lcd("Tp3 GenSig 24-25");
             // A adapter pour les 2 noms sur 2 lignes
-            lcd_gotoxy(1,2);
+            lcd_gotoxy(C1,L2);
             printf_lcd("Clauzel ");
 
             // Active les timers 
@@ -177,13 +180,14 @@ void APP_Tasks ( void )
         break;
 
        case APP_STATE_SERVICE_TASKS:
+           
             BSP_LEDToggle(BSP_LED_2);
-            //test du pec12
-            ScanPec12(PEC12_A,PEC12_B,PEC12_PB);
             
-            //printf_lcd("inc %d, dec %d",Pec12.Inc,Pec12.Dec);
+            
+            
             // Execution du menu
             MENU_Execute(&LocalParamGen);
+            
             appData.state = APP_STATE_WAIT;
          break;
         /* TODO: implement your application state machine.*/
@@ -207,6 +211,9 @@ void APP_Timer1CallBack(void) {
     //ScanPec12(state A, State b stace PB)
     LED1_W = !LED1_R;
   
+    // pec12
+    ScanPec12(PEC12_A,PEC12_B,PEC12_PB);
+    
     // compteur qui gere le temps d'init
     cntCycles++;
     if (cntCycles >= TEMP_INIT) 

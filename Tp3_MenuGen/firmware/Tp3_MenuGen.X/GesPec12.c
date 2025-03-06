@@ -70,25 +70,31 @@ S_Pec12_Descriptor Pec12;
 
 void ScanPec12(bool ValA, bool ValB, bool ValPB)
 {
+    
     // Traitement antirebond sur A, B et PB
     DoDebounce(&DescrA, ValA);
     DoDebounce(&DescrB, ValB);
     DoDebounce(&DescrPB, ValPB);
-
+    static uint8_t PbWasPressed = 0; 
+//    bool A_state_save;
+//    bool B_state_save;
+    
+    
     // Détection incrément / décrément
-    if ((DescrB.bits.KeyPrevInputValue == 1) && (DescrB.bits.KeyValue == 0))
+    if (DebounceIsPressed(&DescrB))
     {
+        DebounceClearPressed(&DescrB);
       
-        if (DescrA.bits.KeyValue == 1)
+        if (DebounceGetInput(&DescrA))
         {
             
-            Pec12ClearPlus();
+            //Pec12ClearPlus();
             Pec12.Dec = 1;
         }
         else
         {
             
-            Pec12ClearMinus();
+            //Pec12ClearMinus();
             Pec12.Inc = 1;
         }
         Pec12ClearInactivity();
@@ -97,41 +103,45 @@ void ScanPec12(bool ValA, bool ValB, bool ValPB)
     else
     {
          // Traitement du PushButton
-    if (DescrPB.bits.KeyValue == 0)
+    if (!DebounceGetInput(&DescrPB))
     {
+        
         Pec12.PressDuration++;
-        Pec12.NoActivity = 0;
-        Pec12.InactivityDuration = 0;
+        PbWasPressed = 1;
+        Pec12ClearInactivity();
+        DebounceClearPressed(&DescrPB);
     }
     else
     {
 
-        if ((DescrPB.bits.KeyPrevInputValue == 0) && (DescrPB.bits.KeyValue == 1))
+        if (!(DebounceIsPressed(&DescrPB)) && PbWasPressed) 
         {
+            DebounceClearReleased(&DescrPB);
             Pec12ClearInactivity();
             if (Pec12.PressDuration < 500)
             {
                 Pec12.OK = 1;
-                Pec12ClearESC();
+                //Pec12ClearESC();
                 
             }
             else
             {
-                Pec12ClearOK();
+                //Pec12ClearOK();
                 Pec12.ESC = 1;
             }
+            Pec12.PressDuration =0;
         }
         else
         {
             
-                
+            PbWasPressed =0;
             Pec12.NoActivity = 1;
         }
 
     }
 
         
-    }
+}
 
 
    
@@ -139,9 +149,9 @@ void ScanPec12(bool ValA, bool ValB, bool ValPB)
     if(Pec12NoActivity()!=0)
     {
         Pec12.InactivityDuration ++;
-        if(Pec12.InactivityDuration >= 500)
+        if(Pec12.InactivityDuration >= 5000)
         {
-            Pec12.InactivityDuration=500;
+            Pec12.InactivityDuration=5000;
             lcd_bl_off();
         }
     }
@@ -149,7 +159,8 @@ void ScanPec12(bool ValA, bool ValB, bool ValPB)
     {
          lcd_bl_on();
     }
-
+//    A_state_save = DebounceGetInput(&DescrA);
+//    B_state_save = DebounceGetInput(&DescrB);
 } // ScanPec12
 
 void Pec12Init(void)

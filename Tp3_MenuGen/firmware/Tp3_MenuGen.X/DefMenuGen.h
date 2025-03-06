@@ -11,12 +11,28 @@
 #define DEFMENUGEN_H
 
 #include <stdint.h>
+#include "app.h"
 
 #define MAGIC 0x123455AA
+#define STEPOFFSET 100
+#define STEPAMPL 100
+#define STEFREQ 20
+
+#define LIMOFFSET 5000
+#define LIMAMPL 10000
+#define LIMFREQ 2000
+#define _5V 5000
+#define _20Hz 20
+#define L1 1
+#define L2 2
+#define L3 3
+#define L4 4
+#define C1 1
 
 typedef enum  { SignalSinus, SignalTriangle, SignalDentDeScie, SignalCarre } E_FormesSignal;
 
-typedef enum  { Selector, FormeSet, FreqSet,Offset7,Save } E_Menu;
+
+typedef enum  { AmplSel,AmplSet, FormeSel,FormeSet,FreqSel, FreqSet,OffsetSel,Offset7,Save } E_Menu;
 
 
 // Structure des paramètres du générateur
@@ -28,4 +44,14 @@ typedef struct {
       uint32_t Magic;
 } S_ParamGen;
 
+typedef struct{
+    int8_t menu;
+    int16_t reglageForme;
+    int16_t reglageFreq;
+    int16_t reglageOffset;
+    int16_t reglageAmpl;
+    
+}S_Menu;
+void UpdateScreen(S_ParamGen *pParam);
+void Pec12SelSave(void);
 #endif
