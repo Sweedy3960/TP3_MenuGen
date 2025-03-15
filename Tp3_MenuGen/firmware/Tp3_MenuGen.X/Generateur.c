@@ -66,12 +66,12 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
                 if (i < MAX_ECH / 2) 
                 {
 
-                    tablEch[i] = (MIDPOINT - ((pParam->Offset*COEF) + (step * i)));
+                    //tablEch[i] = (MIDPOINT - ((pParam->Offset*COEF) + (step * i)));
 
                 } else 
                 {
 
-                    tablEch[i] = (MIDPOINT + ((pParam->Offset * COEF) + (step * (MAX_ECH - i)))); 
+                   // tablEch[i] = (MIDPOINT + ((pParam->Offset * COEF) + (step * (MAX_ECH - i)))); 
 
                 }
             }
