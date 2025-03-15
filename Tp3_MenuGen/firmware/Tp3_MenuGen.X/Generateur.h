@@ -11,7 +11,11 @@
 #include <stdbool.h>
 
 #include "DefMenuGen.h"
-
+#define ADC_MAX 65535
+#define MIDPOINT  32765
+#define REG_MAX 10000
+#define COEF    3.27675
+#define COEF2    6.5535
 // Initialisation du  générateur
 void  GENSIG_Initialize(S_ParamGen *pParam);
 

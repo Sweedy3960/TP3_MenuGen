@@ -116,6 +116,7 @@ void ScanPec12(bool ValA, bool ValB, bool ValPB)
 
         if (!(DebounceIsPressed(&DescrPB)) && PbWasPressed) 
         {
+           
             DebounceClearReleased(&DescrPB);
             Pec12ClearInactivity();
             if (Pec12.PressDuration < 500)
@@ -130,6 +131,7 @@ void ScanPec12(bool ValA, bool ValB, bool ValPB)
                 Pec12.ESC = 1;
             }
             Pec12.PressDuration =0;
+            PbWasPressed =0;
         }
         else
         {

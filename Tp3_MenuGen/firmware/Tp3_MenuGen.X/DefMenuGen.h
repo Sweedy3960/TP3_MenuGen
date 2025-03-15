@@ -52,6 +52,6 @@ typedef struct{
     int16_t reglageAmpl;
     
 }S_Menu;
-void UpdateScreen(S_ParamGen *pParam);
+void UpdateScreen(void);
 void Pec12SelSave(void);
 #endif
