@@ -27,9 +27,9 @@ static uint16_t tablEch[100] = {0};
 void  GENSIG_Initialize(S_ParamGen *pParam)
 {
    
-    pParam->Forme = SignalCarre;
+    pParam->Forme = SignalTriangle;
     pParam->Frequence = 100;
-    pParam->Amplitude= 500;
+    pParam->Amplitude= 5000;
     pParam->Offset = 0;
     pParam->Magic =MAGIC;
 
@@ -47,19 +47,19 @@ void  GENSIG_UpdatePeriode(S_ParamGen *pParam)
 void  GENSIG_UpdateSignal(S_ParamGen *pParam)
 {
    
-    
+    static uint32_t val;
     uint8_t i=0;
     float step= (((pParam->Amplitude)/MAX_ECH) *COEF);
     switch(pParam->Forme)
 {
         case SignalSinus:
-            for (i = 0; i < MAX_ECH; i++) {
-                tablEch[i] = MIDPOINT - (((pParam->Amplitude/2) * sin(2 * M_PI * (i / (float)MAX_ECH)) + pParam->Offset)*COEF);
-
+            for (i = 0; i < MAX_ECH; i++) 
+            {
+                tablEch[i] = (MIDPOINT -(((pParam->Amplitude/2) * sin(2 * M_PI * (i / (float)MAX_ECH)) + pParam->Offset)*COEF));
             }
             break;
         case SignalTriangle:
-            step= (((pParam->Amplitude/2)/MAX_ECH) *COEF);
+            step= (((pParam->Amplitude)/MAX_ECH) *COEF);
 
             for (i = 0; i <= MAX_ECH; i++) 
             {
@@ -73,7 +73,8 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
                 } else 
                 {
 
-                    tablEch[i] = (MIDPOINT - tablEch[MAX_ECH-i]); 
+                    tablEch[i] = (MIDPOINT - ((pParam->Offset * COEF) + (step * (MAX_ECH - i))));
+
 
                 }
             }
@@ -81,31 +82,21 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
         case SignalCarre:
             for (i=0;i<(MAX_ECH/2);i++)
             {
-                tablEch[i] =(MIDPOINT+(((((pParam->Amplitude+pParam->Offset) *COEF)/2)+0.5)));
+                tablEch[i] =(MIDPOINT+((((pParam->Amplitude *COEF)/2))-(pParam->Offset *COEF)));
             }
             for (i=(MAX_ECH/2);i<MAX_ECH;i++)
             {
-                tablEch[i] = (MIDPOINT-(((((pParam->Amplitude+pParam->Offset) *COEF)/2)+0.5)));
+                tablEch[i] = (MIDPOINT-((((pParam->Amplitude *COEF)/2))+(pParam->Offset *COEF)));
             }
             break;
+            
         case SignalDentDeScie:
             for (i = 0; i < (MAX_ECH); i++)
             {
                 tablEch[i] =(MIDPOINT-(float)(step * i)-(pParam->Offset*COEF)+(MAX_ECH * step )/ 2);
             }
             break;
-    }  
-    for (i = 0; i < MAX_ECH; i++)
-    {
-        if( tablEch[i] >= ADC_MAX)
-        {
-            tablEch[i] = ADC_MAX;
-        }
-        else if(tablEch[i] <= 0)
-        {
-            tablEch[i] = 0;
-        }
-    }   
+    }     
 }
 // Fonction appelée dans Int timer3 (cycle variable variable)
 

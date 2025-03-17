@@ -1,5 +1,5 @@
-build/default/production/MenuGen.o: MenuGen.c MenuGen.h DefMenuGen.h \
- app.h ../src/system_config/default/system_config.h \
+build/default/production/MenuGen.o: MenuGen.c app.h \
+ ../src/system_config/default/system_config.h \
  ../../../../../../../bsp/pic32mx_skes/bsp.h \
  ../../../../../../../framework/peripheral/ports/plib_ports.h \
  ../../../../../../../framework/peripheral/ports/processor/ports_processor.h \
@@ -142,13 +142,9 @@ build/default/production/MenuGen.o: MenuGen.c MenuGen.h DefMenuGen.h \
  ../../../../../../../framework/driver/tmr/drv_tmr_compatibility.h \
  ../../../../../../../framework/system/ports/sys_ports.h \
  ../../../../../../../framework/system/ports/sys_ports_definitions.h \
- ../src/app.h GesPec12.h \
+ ../src/app.h DefMenuGen.h MenuGen.h GesPec12.h \
  ../../../../../../../bsp/pic32mx_skes/Mc32DriverLcd.h Generateur.h \
  Mc32NVMUtil.h
-
-MenuGen.h:
-
-DefMenuGen.h:
 
 app.h:
 
@@ -439,6 +435,10 @@ app.h:
 ../../../../../../../framework/system/ports/sys_ports_definitions.h:
 
 ../src/app.h:
+
+DefMenuGen.h:
+
+MenuGen.h:
 
 GesPec12.h:
 

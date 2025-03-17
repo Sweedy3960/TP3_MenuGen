@@ -8,11 +8,11 @@
 
 #include <stdint.h>                   
 #include <stdbool.h>
+#include "app.h"
 #include "MenuGen.h"
 #include "DefMenuGen.h"
 #include "GesPec12.h"
 #include "Mc32DriverLcd.h"
-#include "app.h"
 #include "Generateur.h"
 #include "Mc32NVMUtil.h"
 
@@ -37,7 +37,7 @@ void MENU_Execute(S_ParamGen *pParam)
 {
     UpdateScreen();
     GENSIG_UpdateSignal(pParam);
-    uint8_t pushcnt=0;
+    static uint8_t pushcnt=0;
     switch(s_menu.menu)
     {
         case AmplSel:
@@ -134,17 +134,37 @@ void MENU_Execute(S_ParamGen *pParam)
                 s_menu.reglageForme = pParam->Forme;
             }
             break;
+            
+            
+            
+  
         case AmplSet:
           
              if (Pec12IsPlus()) {
                 Pec12ClearPlus();
                 s_menu.reglageAmpl +=STEPAMPL;
-               
+                if(s_menu.reglageAmpl>=LIMAMPL)
+                {
+                    s_menu.reglageAmpl = MINAMPL;
+                }
+                else
+                {
+                    s_menu.reglageAmpl +=STEPAMPL;
+                }                          
             }
+             
             if (Pec12IsMinus()) {
                 Pec12ClearMinus();
-                s_menu.reglageAmpl -=STEPAMPL;
+                if(s_menu.reglageAmpl<=MINAMPL)
+                {
+                    s_menu.reglageAmpl = LIMAMPL;
+                }
+                else
+                {
+                    s_menu.reglageAmpl -=STEPAMPL;
+                }    
             }
+             
             if (Pec12IsOK()) {
                 Pec12ClearOK();
                 pParam->Amplitude = s_menu.reglageAmpl;
@@ -159,17 +179,36 @@ void MENU_Execute(S_ParamGen *pParam)
             }
             
             break;
+            
+            
+            
+   
         case FreqSet: 
             
              if (Pec12IsPlus()) {
                 Pec12ClearPlus();
-                s_menu.reglageFreq +=STEFREQ;
-               
+                if(s_menu.reglageFreq>=LIMFREQ)
+                {
+                    s_menu.reglageFreq = MINFREQ;
+                }
+                else
+                {
+                    s_menu.reglageFreq +=STEFREQ;
+                }      
             }
             if (Pec12IsMinus()) {
                 Pec12ClearMinus();
-                 s_menu.reglageFreq -=STEFREQ;
+                
+                if(s_menu.reglageFreq<=MINFREQ)
+                {
+                    s_menu.reglageFreq = LIMFREQ;
+                }
+                else
+                {
+                    s_menu.reglageFreq -=STEFREQ;
+                }                 
             }
+ 
             if (Pec12IsOK()) {
                 Pec12ClearOK();
                 pParam->Frequence = s_menu.reglageFreq;
@@ -184,15 +223,30 @@ void MENU_Execute(S_ParamGen *pParam)
             
             break;
         case Offset7: 
-            
               if (Pec12IsPlus()) {
                 Pec12ClearPlus();
-                s_menu.reglageOffset +=STEPOFFSET;
+                if(s_menu.reglageOffset>=LIMOFFSET)
+                {
+                    s_menu.reglageOffset = LIMOFFSET;
+                }
+                else
+                {
+                    s_menu.reglageOffset +=STEPOFFSET;
+                }  
                
             }
             if (Pec12IsMinus()) {
                 Pec12ClearMinus();
-                s_menu.reglageOffset -=STEPOFFSET;
+                
+                if(s_menu.reglageOffset<=MINOFF)
+                {
+                    s_menu.reglageOffset = MINOFF;
+                }
+                else
+                {
+                    s_menu.reglageOffset -=STEPOFFSET;
+                }    
+                
             }
             if (Pec12IsOK()) {
                 Pec12ClearOK();
@@ -208,12 +262,7 @@ void MENU_Execute(S_ParamGen *pParam)
             }
             break;
         case Save: 
-            lcd_gotoxy(1, 2);
-            printf_lcd("   Sauvegarde  ?");
-            lcd_gotoxy(1, 3);
-            printf_lcd("   (appuis long)");
-            
-            if (PLIB_PORTS_PinGet(S_OK, PORT_CHANNEL_G, PORTS_BIT_POS_12) == 0)
+            if (S9IsESC())
             {
                 pushcnt ++;  
             }
@@ -247,6 +296,19 @@ void MENU_Execute(S_ParamGen *pParam)
             break;
 
     }
+    switch(s_menu.menu)
+    {
+        case AmplSel:   
+        case FormeSel:  
+        case FreqSel:   
+        case OffsetSel:
+            if (PLIB_PORTS_PinGet(S_OK, PORT_CHANNEL_G, PORTS_BIT_POS_12) == 0)
+            {
+                s_menu.menu = Save;  
+                
+            } 
+            break;
+        }
     //GENSIG_UpdateSignal(pParam);
     
 }
@@ -278,7 +340,8 @@ void Pec12SelSave(void)
 }
 void UpdateScreen(void)
 {
-     lcd_putc('\f');
+    //clear lcd
+    lcd_putc('\f');
 
     switch(s_menu.menu)
     {
@@ -370,7 +433,14 @@ void UpdateScreen(void)
             lcd_gotoxy(C1,L4);
             printf_lcd("?Offset = %d",s_menu.reglageOffset); //affiche sur le LCD
             break;
-        
+        case Save:
+            lcd_putc('\f');
+            lcd_gotoxy(1, 2);
+            printf_lcd("   Sauvegarde  ?");
+            lcd_gotoxy(1, 3);
+            printf_lcd("   (appuis long)");
+            
+            break;
    
   
     }

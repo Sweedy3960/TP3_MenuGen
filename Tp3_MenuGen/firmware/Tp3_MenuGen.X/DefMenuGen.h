@@ -21,6 +21,11 @@
 #define LIMOFFSET 5000
 #define LIMAMPL 10000
 #define LIMFREQ 2000
+#define MINOFFSET 0
+#define MINAMPL 0
+#define MINFREQ 20
+#define MINOFF -5000
+
 #define _5V 5000
 #define _20Hz 20
 #define L1 1

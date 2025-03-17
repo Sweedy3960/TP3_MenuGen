@@ -114,8 +114,11 @@ typedef struct
 
 #define TEMP_INIT 3000
 #define TEMP_DELAY 10
+#define TEMP_2SEC 2000
 
-
+#define C1 1 
+#define L1 1
+#define L2 2
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Callback Routines
@@ -195,9 +198,17 @@ void APP_Timer3CallBack(void);
   Remarks:
     This routine must be called from SYS_Tasks() routine.
  */
+/*just see pec12*/
 
+
+void S9Init(void);
 void APP_Tasks ( void );
 void APP_UpdateState ( APP_STATES NewState  ) ;
+void ScanPecs9(bool states9);
+bool S9IsOK(void);
+bool S9IsESC(void);
+void S9ClearOK(void);
+void S9ClearESC(void);
 
 #endif /* _APP_H */
 /*******************************************************************************
