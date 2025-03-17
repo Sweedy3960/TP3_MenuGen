@@ -14,9 +14,9 @@
 #include "Mc32DriverLcd.h"
 #include "app.h"
 #include "Generateur.h"
+#include "Mc32NVMUtil.h"
 
 static S_Menu s_menu;
-static S_Menu s_menu_copy;
 static const char FormeSignaux[4][20] = {"Sinus", "Triangle", "DentDeScie", "Carre"};
 // Initialisation du menu et des paramètres
 void MENU_Initialize(S_ParamGen *pParam)
@@ -37,6 +37,7 @@ void MENU_Execute(S_ParamGen *pParam)
 {
     UpdateScreen();
     GENSIG_UpdateSignal(pParam);
+    uint8_t pushcnt=0;
     switch(s_menu.menu)
     {
         case AmplSel:
@@ -207,9 +208,42 @@ void MENU_Execute(S_ParamGen *pParam)
             }
             break;
         case Save: 
+            lcd_gotoxy(1, 2);
+            printf_lcd("   Sauvegarde  ?");
+            lcd_gotoxy(1, 3);
+            printf_lcd("   (appuis long)");
+            
+            if (PLIB_PORTS_PinGet(S_OK, PORT_CHANNEL_G, PORTS_BIT_POS_12) == 0)
+            {
+                pushcnt ++;  
+            }
+            else
+            {
+                if (pushcnt > 0)
+                {
+                    if (pushcnt >= 200)
+                    {
+                        // Sauvegarde dans la flash
+                        NVM_WriteBlock((uint32_t*)pParam, sizeof(S_ParamGen));
+                        //NVM_WriteBlock((uint32_t*) pParam, sizeof(S_ParamGen));
+                        pushcnt = 0;
+                        lcd_gotoxy(1, 4);
+                        printf_lcd("Data sauvegardee");
+                         
+                    }
+                    else
+                    {
+                        // Retour au menu forme
+                        s_menu.menu = FormeSel;
+                        pushcnt = 0;
+                    }
+                }
+            }
+            
             
             break;
         default:
+            s_menu.menu = FormeSel;
             break;
 
     }

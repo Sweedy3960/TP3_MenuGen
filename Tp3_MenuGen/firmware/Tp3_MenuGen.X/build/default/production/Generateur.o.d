@@ -1,5 +1,6 @@
-build/default/production/Generateur.o: Generateur.c Generateur.h \
- DefMenuGen.h app.h ../src/system_config/default/system_config.h \
+build/default/production/Generateur.o: Generateur.c Mc32NVMUtil.h \
+ Generateur.h DefMenuGen.h app.h \
+ ../src/system_config/default/system_config.h \
  ../../../../../../../bsp/pic32mx_skes/bsp.h \
  ../../../../../../../framework/peripheral/ports/plib_ports.h \
  ../../../../../../../framework/peripheral/ports/processor/ports_processor.h \
@@ -143,6 +144,8 @@ build/default/production/Generateur.o: Generateur.c Generateur.h \
  ../../../../../../../framework/system/ports/sys_ports.h \
  ../../../../../../../framework/system/ports/sys_ports_definitions.h \
  ../src/app.h Mc32gestSpiDac.h
+
+Mc32NVMUtil.h:
 
 Generateur.h:
 

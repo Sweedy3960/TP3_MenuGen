@@ -9,13 +9,14 @@
 
 
 #include <proc/p32mx795f512l.h>
-
+#include "Mc32NVMUtil.h"
 #include "Generateur.h"
 #include "DefMenuGen.h"
 #include "Mc32gestSpiDac.h"
 #include "driver/tmr/drv_tmr.h"
 #include "math.h"
 #include "stdint.h"
+
 // T.P. 2016 100 echantillons
 #define MAX_ECH 100
 #define VALUE 3/65536 
@@ -66,12 +67,13 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
                 if (i < MAX_ECH / 2) 
                 {
 
-                    //tablEch[i] = (MIDPOINT - ((pParam->Offset*COEF) + (step * i)));
+                    tablEch[i] = (MIDPOINT - ((pParam->Offset*COEF) + (step * i)));
+                    
 
                 } else 
                 {
 
-                   // tablEch[i] = (MIDPOINT + ((pParam->Offset * COEF) + (step * (MAX_ECH - i)))); 
+                    tablEch[i] = (MIDPOINT - tablEch[MAX_ECH-i]); 
 
                 }
             }
