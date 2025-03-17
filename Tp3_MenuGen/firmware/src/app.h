@@ -201,14 +201,10 @@ void APP_Timer3CallBack(void);
 /*just see pec12*/
 
 
-void S9Init(void);
+
 void APP_Tasks ( void );
 void APP_UpdateState ( APP_STATES NewState  ) ;
-void ScanPecs9(bool states9);
-bool S9IsOK(void);
-bool S9IsESC(void);
-void S9ClearOK(void);
-void S9ClearESC(void);
+
 
 #endif /* _APP_H */
 /*******************************************************************************

@@ -214,7 +214,6 @@ void APP_Timer1CallBack(void) {
   
     // pec12
     ScanPec12(PEC12_A,PEC12_B,PEC12_PB);
-    
     // compteur qui gere le temps d'init
     cntCycles++;
     if (cntCycles >= TEMP_INIT) 
@@ -232,76 +231,6 @@ void APP_Timer3CallBack(void) {
     GENSIG_Execute();
     LED0_W = 0;
 }
-void ScanPecs9(bool states9)
-{
-   // Traitement antirebond
-   DoDebounce (&Descrs9, states9);
-   
-   // Compte le temps d'appui
-   if(states9 == 0)
-   {
-       S9.PressDuration++;
-   }
-   
-   // Lors d'un relachement
-   if(DebounceIsReleased(&Descrs9))
-   {
-       // Test de la durée d'appui
-       if(S9.PressDuration >= TEMP_2SEC)
-       {
-           // Appui long
-           S9.ESC = 1;
-           S9.OK = 0;
-       }
-       else
-       {
-           // Appui court
-           S9.OK = 1;
-           S9.ESC = 0;
-       }
-       S9.PressDuration = 0;    // Remise à 0 du temps d'appui
-   }
-   // Clear les flag d'appui et de relachement du bouton
-   DebounceClearPressed(&Descrs9);
-   DebounceClearReleased(&Descrs9);
-}
-
-//       S9IsOK         true indique action OK
-bool S9IsOK    (void) {
-   return (S9.OK);
-}
-
-//       S9IsESC        true indique action ESC
-bool S9IsESC    (void) {
-   return (S9.ESC);
-}
-
-//       S9ClearOK      annule indication action OK
-void S9ClearOK   (void) {
-   S9.OK = 0;
-}
-
-//       S9ClearESC     annule indication action ESC
-void S9ClearESC   (void) {
-   S9.ESC = 0;
-}
-
-void S9Init (void)
-{
-   // Initialisation du descripteur de S9
-   DebounceInit(&Descrs9);
-   
-   // Init de la structure S9
-    S9.Inc = 0;             // Événement incrément  
-    S9.Dec = 0;             // Événement décrément 
-    S9.OK = 0;              // Événement action OK
-    S9.ESC = 0;             // Événement action ESC
-    S9.NoActivity = 0;      // Indication d'activité
-    S9.PressDuration = 0;   // Pour durée pression du P.B.
-    S9.InactivityDuration = 0; // Durée inactivité
-  
- } // Pec12Init
-
 /*******************************************************************************
  End of File
  */

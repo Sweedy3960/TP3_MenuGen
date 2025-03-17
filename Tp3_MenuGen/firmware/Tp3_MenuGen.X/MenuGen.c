@@ -15,7 +15,7 @@
 #include "Mc32DriverLcd.h"
 #include "Generateur.h"
 #include "Mc32NVMUtil.h"
-
+static char flagS9;
 static S_Menu s_menu;
 static const char FormeSignaux[4][20] = {"Sinus", "Triangle", "DentDeScie", "Carre"};
 // Initialisation du menu et des paramètres
@@ -35,6 +35,7 @@ void MENU_Initialize(S_ParamGen *pParam)
 // Execution du menu, appel cyclique depuis l'application
 void MENU_Execute(S_ParamGen *pParam)
 {
+   
     UpdateScreen();
     GENSIG_UpdateSignal(pParam);
     static uint8_t pushcnt=0;
@@ -262,7 +263,7 @@ void MENU_Execute(S_ParamGen *pParam)
             }
             break;
         case Save: 
-            if (S9IsESC())
+            if (PLIB_PORTS_PinGet(S_OK, PORT_CHANNEL_G, PORTS_BIT_POS_12) == 0)
             {
                 pushcnt ++;  
             }
@@ -270,21 +271,20 @@ void MENU_Execute(S_ParamGen *pParam)
             {
                 if (pushcnt > 0)
                 {
-                    if (pushcnt >= 200)
+                    if (pushcnt >= 10)
                     {
                         // Sauvegarde dans la flash
                         NVM_WriteBlock((uint32_t*)pParam, sizeof(S_ParamGen));
                         //NVM_WriteBlock((uint32_t*) pParam, sizeof(S_ParamGen));
                         pushcnt = 0;
-                        lcd_gotoxy(1, 4);
-                        printf_lcd("Data sauvegardee");
+                        flagS9 =1;
+                        s_menu.menu = FormeSel;
                          
                     }
                     else
                     {
-                        // Retour au menu forme
-                        s_menu.menu = FormeSel;
                         pushcnt = 0;
+                        flagS9=0;
                     }
                 }
             }
@@ -434,12 +434,24 @@ void UpdateScreen(void)
             printf_lcd("?Offset = %d",s_menu.reglageOffset); //affiche sur le LCD
             break;
         case Save:
-            lcd_putc('\f');
-            lcd_gotoxy(1, 2);
-            printf_lcd("   Sauvegarde  ?");
-            lcd_gotoxy(1, 3);
-            printf_lcd("   (appuis long)");
+         
+           
+            if(flagS9)
+            {
+                lcd_gotoxy(1, 3);
+                printf_lcd("Data sauvegardee");
+            }
+            else
+            {
+                 lcd_gotoxy(1, 2);
+                printf_lcd("   Sauvegarde  ?");
+                lcd_gotoxy(1, 3);
+                printf_lcd("   (appuis long)");
             
+            }
+            
+            
+           
             break;
    
   
