@@ -26,13 +26,17 @@ static uint16_t tablEch[100] = {0};
 // Initialisation du  générateur
 void  GENSIG_Initialize(S_ParamGen *pParam)
 {
-   
-    pParam->Forme = SignalTriangle;
-    pParam->Frequence = 100;
-    pParam->Amplitude= 5000;
-    pParam->Offset = 0;
-    pParam->Magic =MAGIC;
-
+    NVM_ReadBlock((uint32_t*)pParam, sizeof(S_ParamGen));
+    
+    //test de la sauvegarde
+    if (pParam->Magic != 0x12345678)
+    {
+        pParam->Forme = SignalTriangle;
+        pParam->Frequence = 100;
+        pParam->Amplitude= 5000;
+        pParam->Offset = 0;
+        pParam->Magic =MAGIC;
+    }
 }
   
 
@@ -73,7 +77,7 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
                 } else 
                 {
 
-                    tablEch[i] = (MIDPOINT - ((pParam->Offset * COEF) + (step * (MAX_ECH - i))));
+                    tablEch[i] = (MIDPOINT - ((pParam->Offset * COEF) + (step * (MAX_ECH/2 - i))));
 
 
                 }

@@ -15,21 +15,19 @@
 #include "Mc32DriverLcd.h"
 #include "Generateur.h"
 #include "Mc32NVMUtil.h"
+
+//globals
 static char flagS9;
 static S_Menu s_menu;
 static const char FormeSignaux[4][20] = {"Sinus", "Triangle", "DentDeScie", "Carre"};
 // Initialisation du menu et des paramètres
 void MENU_Initialize(S_ParamGen *pParam)
 {
-  pParam->Forme =   SignalCarre;
-  pParam->Frequence =  _20Hz ;
-  pParam->Amplitude =  _5V ;
-  pParam->Offset=0;
   s_menu.menu=FormeSel;
-  s_menu.reglageForme= SignalSinus;
-  s_menu.reglageFreq =_20Hz; 
-  s_menu.reglageAmpl =_5V; 
-  s_menu.reglageOffset =0; 
+  s_menu.reglageForme= pParam->Forme;
+  s_menu.reglageFreq =pParam->Frequence; 
+  s_menu.reglageAmpl =pParam->Amplitude; 
+  s_menu.reglageOffset =pParam->Offset; 
 }
   
 // Execution du menu, appel cyclique depuis l'application
@@ -135,10 +133,6 @@ void MENU_Execute(S_ParamGen *pParam)
                 s_menu.reglageForme = pParam->Forme;
             }
             break;
-            
-            
-            
-  
         case AmplSet:
           
              if (Pec12IsPlus()) {
@@ -278,8 +272,7 @@ void MENU_Execute(S_ParamGen *pParam)
                         //NVM_WriteBlock((uint32_t*) pParam, sizeof(S_ParamGen));
                         pushcnt = 0;
                         flagS9 =1;
-                        s_menu.menu = FormeSel;
-                         
+                        s_menu.menu = FormeSel;                         
                     }
                     else
                     {
@@ -287,15 +280,13 @@ void MENU_Execute(S_ParamGen *pParam)
                         flagS9=0;
                     }
                 }
-            }
-            
-            
+            } 
             break;
         default:
             s_menu.menu = FormeSel;
             break;
-
     }
+    
     switch(s_menu.menu)
     {
         case AmplSel:   
@@ -434,8 +425,6 @@ void UpdateScreen(void)
             printf_lcd("?Offset = %d",s_menu.reglageOffset); //affiche sur le LCD
             break;
         case Save:
-         
-           
             if(flagS9)
             {
                 lcd_gotoxy(1, 3);
@@ -449,9 +438,6 @@ void UpdateScreen(void)
                 printf_lcd("   (appuis long)");
             
             }
-            
-            
-           
             break;
    
   
