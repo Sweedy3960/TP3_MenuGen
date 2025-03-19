@@ -25,9 +25,9 @@ void MENU_Initialize(S_ParamGen *pParam)
 {
   s_menu.menu=FormeSel;
   s_menu.reglageForme= pParam->Forme;
-  s_menu.reglageFreq =pParam->Frequence; 
-  s_menu.reglageAmpl =pParam->Amplitude; 
-  s_menu.reglageOffset =pParam->Offset; 
+  s_menu.reglageFreq = pParam->Frequence; 
+  s_menu.reglageAmpl = pParam->Amplitude; 
+  s_menu.reglageOffset = pParam->Offset; 
 }
   
 // Execution du menu, appel cyclique depuis l'application
@@ -35,7 +35,7 @@ void MENU_Execute(S_ParamGen *pParam)
 {
    
     UpdateScreen();
-    GENSIG_UpdateSignal(pParam);
+    
     static uint8_t pushcnt=0;
     switch(s_menu.menu)
     {
@@ -209,6 +209,7 @@ void MENU_Execute(S_ParamGen *pParam)
                 pParam->Frequence = s_menu.reglageFreq;
                 s_menu.menu = FreqSel;
                 GENSIG_UpdateSignal(pParam);
+                GENSIG_UpdatePeriode(pParam);
             }
             if (Pec12IsESC()) {
                 Pec12ClearESC();
@@ -269,7 +270,7 @@ void MENU_Execute(S_ParamGen *pParam)
                     {
                         // Sauvegarde dans la flash
                         NVM_WriteBlock((uint32_t*)pParam, sizeof(S_ParamGen));
-                        //NVM_WriteBlock((uint32_t*) pParam, sizeof(S_ParamGen));
+                       
                         pushcnt = 0;
                         flagS9 =1;
                         s_menu.menu = FormeSel;                         

@@ -19,23 +19,26 @@
 
 // T.P. 2016 100 echantillons
 #define MAX_ECH 100
-#define VALUE 3/65536 
-#define FCLK 80000
+S_ParamGen ValInit;
+#define FCLK 800000
 static uint16_t tablEch[100] = {0};
-
 // Initialisation du  générateur
 void  GENSIG_Initialize(S_ParamGen *pParam)
 {
-    NVM_ReadBlock((uint32_t*)pParam, sizeof(S_ParamGen));
+    NVM_ReadBlock((uint32_t*)&ValInit, sizeof(S_ParamGen));
     
     //test de la sauvegarde
     if (pParam->Magic != 0x12345678)
     {
-        pParam->Forme = SignalTriangle;
+        pParam->Forme = SignalSinus;
         pParam->Frequence = 100;
-        pParam->Amplitude= 5000;
-        pParam->Offset = 0;
+        pParam->Amplitude= 10000;
+        pParam->Offset = 5000;
         pParam->Magic =MAGIC;
+    }
+    else
+    {
+        *pParam = ValInit;
     }
 }
   
@@ -44,7 +47,7 @@ void  GENSIG_Initialize(S_ParamGen *pParam)
 void  GENSIG_UpdatePeriode(S_ParamGen *pParam)
 {
     //modifie la valeur de periode du registe timer3 
-    PLIB_TMR_Period16BitSet(TMR_ID_3, (double)((FCLK/pParam->Frequence)+0.5));  
+    PLIB_TMR_Period16BitSet(TMR_ID_3, ((uint16_t)((FCLK/pParam->Frequence))));  
 }
 
 // Mise à jour du signal (forme, amplitude, offset)
@@ -59,48 +62,127 @@ void  GENSIG_UpdateSignal(S_ParamGen *pParam)
         case SignalSinus:
             for (i = 0; i < MAX_ECH; i++) 
             {
-                tablEch[i] = (MIDPOINT -(((pParam->Amplitude/2) * sin(2 * M_PI * (i / (float)MAX_ECH)) + pParam->Offset)*COEF));
-            }
+                  val = (MIDPOINT -((((pParam->Amplitude/2) * sin(2 * M_PI * (i / (float)MAX_ECH)) + pParam->Offset)*COEF)));
+                  
+                  
+                      if (val >= ADC_MAX )
+                      {
+                          val = (MINAMPL+1);
+                      }
+                      if (val <= MINAMPL )
+                      {
+                          val = (ADC_MAX-1);
+                      }
+                  
+                 tablEch[i] =(uint16_t)val;
+                  
+                  
+
+                 
+            }  
             break;
+       
         case SignalTriangle:
-            step= (((pParam->Amplitude)/MAX_ECH) *COEF);
+
+            //step= (((pParam->Amplitude*2)/MAX_ECH/4) *COEF);
 
             for (i = 0; i <= MAX_ECH; i++) 
             {
 
                 if (i < MAX_ECH / 2) 
+               {
+                    if(i<(MAX_ECH/4))
+                    {
+                        val = (uint32_t) ((MIDPOINT + (pParam->Offset*COEF))-((((((pParam->Amplitude/2 *COEF) -1)))/(MAX_ECH/4))*i)-MIDPOINT/4);
+                        if (val >= ADC_MAX )
+                      {
+                          val = (MINAMPL+1);
+                      }
+                      if (val <= MINAMPL )
+                      {
+                          val = (ADC_MAX-1);
+                      }
+                  
+                     tablEch[i] =(uint16_t)val;
+                        
+                        //tablEch[i] =
+                  //tablEch[i] = MIDPOINT + (pParam->Offset * COEF) + (step * i)-MIDPOINT/4;
+                    }
+                    else
+                    {
+                        tablEch[i] = (((MIDPOINT + pParam->Offset*COEF))-((((((pParam->Amplitude/2 *COEF)-1)))/(MAX_ECH/4))*i)-MIDPOINT/4);
+                    }
+               }
+                else 
                 {
-
-                    tablEch[i] = (MIDPOINT - ((pParam->Offset*COEF) + (step * i)));
-                    
-
-                } else 
-                {
-
-                    tablEch[i] = (MIDPOINT - ((pParam->Offset * COEF) + (step * (MAX_ECH/2 - i))));
-
-
+                   if (i<(3*(MAX_ECH/4)))
+                   {
+                        tablEch[i] = (((MIDPOINT+ pParam->Offset*COEF) )-((((((pParam->Amplitude/2 *COEF))-1)/(MAX_ECH/4))*(MAX_ECH-i)))-MIDPOINT/4);
+                   }
+                   else
+                    {
+                       tablEch[i] = (((MIDPOINT+ pParam->Offset*COEF) )-((((((pParam->Amplitude/2 *COEF))-1)/(MAX_ECH/4))*(MAX_ECH-i))+MIDPOINT/4));
+                    }
                 }
             }
             break;
         case SignalCarre:
             for (i=0;i<(MAX_ECH/2);i++)
             {
-                tablEch[i] =(MIDPOINT+((((pParam->Amplitude *COEF)/2))-(pParam->Offset *COEF)));
+                val =(MIDPOINT+((((pParam->Amplitude *COEF)/2))-(pParam->Offset *COEF)));
+                if (val >= ADC_MAX )
+                      {
+                          val = (MINAMPL+1);
+                      }
+                      if (val <= MINAMPL )
+                      {
+                          val = (ADC_MAX-1);
+                      }
+                  
+                 tablEch[i] =(uint16_t)val;
+                  
             }
             for (i=(MAX_ECH/2);i<MAX_ECH;i++)
             {
-                tablEch[i] = (MIDPOINT-((((pParam->Amplitude *COEF)/2))+(pParam->Offset *COEF)));
+                val = (MIDPOINT-((((pParam->Amplitude *COEF)/2))+(pParam->Offset *COEF)));
+                if (val >= ADC_MAX )
+                      {
+                          val = (MINAMPL+1);
+                      }
+                      if (val <= MINAMPL )
+                      {
+                          val = (ADC_MAX-1);
+                      }
+                  
+                tablEch[i] =(uint16_t)val;
             }
             break;
             
         case SignalDentDeScie:
             for (i = 0; i < (MAX_ECH); i++)
             {
-                tablEch[i] =(MIDPOINT-(float)(step * i)-(pParam->Offset*COEF)+(MAX_ECH * step )/ 2);
+                val =(MIDPOINT-(float)(step * i)-(pParam->Offset*COEF)+(MAX_ECH * step )/ 2);
+                 if (val >= ADC_MAX )
+                      {
+                          val = (MINAMPL+1);
+                      }
+                      if (val <= MINAMPL )
+                      {
+                          val = (ADC_MAX-1);
+                      }
+                  
+                tablEch[i] =(uint16_t)val;
+                
             }
             break;
-    }     
+         
+}
+     for (i = 0; i < MAX_ECH; i++) 
+     {
+        val = (uint32_t)tablEch[i];
+        
+            
+     }
 }
 // Fonction appelée dans Int timer3 (cycle variable variable)
 
