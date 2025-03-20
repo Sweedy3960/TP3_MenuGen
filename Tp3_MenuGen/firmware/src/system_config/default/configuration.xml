@@ -8,7 +8,7 @@
     <HarmonyPath dnOrder="0" path="../../../../.."/>
     <Processor dnOrder="1" name="PIC32MX795F512L"/>
     <Board dnOrder="2" name=" "/>
-    <ForceOptimization dnOrder="3" flag="true"/>
+    <ForceOptimization dnOrder="3" flag="false"/>
     <MergeStrategy dnOrder="4" flag="USER_ALL"/>
   </General>
   <Manifest>
@@ -169,82 +169,82 @@
         <Checksum dnOrder="2">BC814B1E833F48A33953D65B71BC498D</Checksum>
       </Template>
       <Template dnOrder="1">
-        <Name dnOrder="0">system_init.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
-        <Checksum dnOrder="2">3B68763916F998010407B5B1AB4A5196</Checksum>
-      </Template>
-      <Template dnOrder="2">
-        <Name dnOrder="0">main.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app</Path>
-      </Template>
-      <Template dnOrder="3">
         <Name dnOrder="0">drv_tmr_static.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default/framework/driver/tmr</Path>
         <Checksum dnOrder="2">1C7228F02C03792BAB187C996AEBCD0E</Checksum>
       </Template>
-      <Template dnOrder="4">
+      <Template dnOrder="2">
         <Name dnOrder="0">drv_tmr_mapping.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/tmr/src</Path>
         <Checksum dnOrder="2">DBE26CBCA22A445A54836CB11F19BC62</Checksum>
       </Template>
-      <Template dnOrder="5">
-        <Name dnOrder="0">system_definitions.h</Name>
-        <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default</Path>
-        <Checksum dnOrder="2">688529A70732DE3B0181BE5BBA9AB58A</Checksum>
-      </Template>
-      <Template dnOrder="6">
-        <Name dnOrder="0">system_exceptions.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
-        <Checksum dnOrder="2">A8BF1AE6018CC1DB37C1C14696195A5F</Checksum>
-      </Template>
-      <Template dnOrder="7">
-        <Name dnOrder="0">sys_devcon.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/system/devcon/src</Path>
-        <Checksum dnOrder="2">54ADBD4A35BCA03C42C74182FCE41849</Checksum>
-      </Template>
-      <Template dnOrder="8">
-        <Name dnOrder="0">app.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app</Path>
-      </Template>
-      <Template dnOrder="9">
+      <Template dnOrder="3">
         <Name dnOrder="0">sys_devcon_local.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default/framework/system/devcon/src</Path>
         <Checksum dnOrder="2">B66F9B4DBD85DA7F9DE775E864E01395</Checksum>
       </Template>
-      <Template dnOrder="10">
+      <Template dnOrder="4">
         <Name dnOrder="0">sys_devcon.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default/framework/system/devcon</Path>
         <Checksum dnOrder="2">07580DCDEF89D9C79B062544109C5367</Checksum>
       </Template>
-      <Template dnOrder="11">
-        <Name dnOrder="0">system_tasks.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
-        <Checksum dnOrder="2">C2FDF6218CDD9CE0E51AFAC4ACBB5F79</Checksum>
-      </Template>
-      <Template dnOrder="12">
-        <Name dnOrder="0">sys_devcon_pic32mx.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/system/devcon/src</Path>
-        <Checksum dnOrder="2">5141464248E33ABE9E7D144A2D4DC129</Checksum>
-      </Template>
-      <Template dnOrder="13">
-        <Name dnOrder="0">system_config.h</Name>
-        <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default</Path>
-        <Checksum dnOrder="2">9AB9175D456D7CBB6F39CF6D4304E582</Checksum>
-      </Template>
-      <Template dnOrder="14">
-        <Name dnOrder="0">app.h</Name>
-        <Path dnOrder="1">Header&amp;#160;Files/app</Path>
-      </Template>
-      <Template dnOrder="15">
-        <Name dnOrder="0">drv_tmr_static.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/tmr/src</Path>
-        <Checksum dnOrder="2">D844730FF3C93FD4DED166BABF3EA678</Checksum>
-      </Template>
-      <Template dnOrder="16">
+      <Template dnOrder="5">
         <Name dnOrder="0">system_interrupt.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
         <Checksum dnOrder="2">303534EC1CC7CD6FDEEDDCF1446B3D3C</Checksum>
         <ProjectFileChecksum dnOrder="3">88C7BF6439082E831ABB3D2A6FA267B9</ProjectFileChecksum>
+      </Template>
+      <Template dnOrder="6">
+        <Name dnOrder="0">system_init.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
+        <Checksum dnOrder="2">3B68763916F998010407B5B1AB4A5196</Checksum>
+      </Template>
+      <Template dnOrder="7">
+        <Name dnOrder="0">main.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app</Path>
+      </Template>
+      <Template dnOrder="8">
+        <Name dnOrder="0">system_definitions.h</Name>
+        <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default</Path>
+        <Checksum dnOrder="2">688529A70732DE3B0181BE5BBA9AB58A</Checksum>
+      </Template>
+      <Template dnOrder="9">
+        <Name dnOrder="0">system_exceptions.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
+        <Checksum dnOrder="2">A8BF1AE6018CC1DB37C1C14696195A5F</Checksum>
+      </Template>
+      <Template dnOrder="10">
+        <Name dnOrder="0">sys_devcon.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/system/devcon/src</Path>
+        <Checksum dnOrder="2">54ADBD4A35BCA03C42C74182FCE41849</Checksum>
+      </Template>
+      <Template dnOrder="11">
+        <Name dnOrder="0">app.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app</Path>
+      </Template>
+      <Template dnOrder="12">
+        <Name dnOrder="0">system_tasks.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default</Path>
+        <Checksum dnOrder="2">C2FDF6218CDD9CE0E51AFAC4ACBB5F79</Checksum>
+      </Template>
+      <Template dnOrder="13">
+        <Name dnOrder="0">sys_devcon_pic32mx.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/system/devcon/src</Path>
+        <Checksum dnOrder="2">5141464248E33ABE9E7D144A2D4DC129</Checksum>
+      </Template>
+      <Template dnOrder="14">
+        <Name dnOrder="0">system_config.h</Name>
+        <Path dnOrder="1">Header&amp;#160;Files/app/system_config/default</Path>
+        <Checksum dnOrder="2">9AB9175D456D7CBB6F39CF6D4304E582</Checksum>
+      </Template>
+      <Template dnOrder="15">
+        <Name dnOrder="0">app.h</Name>
+        <Path dnOrder="1">Header&amp;#160;Files/app</Path>
+      </Template>
+      <Template dnOrder="16">
+        <Name dnOrder="0">drv_tmr_static.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/tmr/src</Path>
+        <Checksum dnOrder="2">D844730FF3C93FD4DED166BABF3EA678</Checksum>
       </Template>
       <Template dnOrder="17">
         <Name dnOrder="0">sys_clk_pic32mx.c</Name>

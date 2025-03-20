@@ -19,211 +19,151 @@
 
 // T.P. 2016 100 echantillons
 #define MAX_ECH 100
-S_ParamGen ValInit;
+
 #define FCLK 800000
+#define PER 1.25
 static uint16_t tablEch[100] = {0};
 // Initialisation du  générateur
 
-void GENSIG_Initialize(S_ParamGen *pParam)
-{
-    NVM_ReadBlock((uint32_t*) &ValInit, sizeof (S_ParamGen));
+void GENSIG_Initialize(S_ParamGen *pParam) {
+    static S_ParamGen ValInit;
+    NVM_ReadBlock((uint32_t*) & ValInit, sizeof (S_ParamGen));
 
     //test de la sauvegarde
-    if (pParam->Magic != 0x12345678)
-    {
+    if (ValInit.Magic != MAGIC) {
         pParam->Forme = SignalSinus;
-        pParam->Frequence = 100;
-        pParam->Amplitude = 10000;
-        pParam->Offset = 5000;
+        pParam->Frequence = 1000;
+        pParam->Amplitude = 5000;
+        pParam->Offset = 0;
         pParam->Magic = MAGIC;
-    }
-    else
-    {
+    } else {
         *pParam = ValInit;
+
     }
 }
 
 
 // Mise à jour de la periode d'échantillonage
 
-void GENSIG_UpdatePeriode(S_ParamGen *pParam)
-{
+void GENSIG_UpdatePeriode(S_ParamGen *pParam) {
     //modifie la valeur de periode du registe timer3 
-    PLIB_TMR_Period16BitSet(TMR_ID_3, ((uint16_t) ((FCLK / pParam->Frequence))));
+    PLIB_TMR_Period16BitSet(TMR_ID_3, (uint16_t)((uint64_t)( FCLK / pParam->Frequence)));
 }
 
 // Mise à jour du signal (forme, amplitude, offset)
 
-void GENSIG_UpdateSignal(S_ParamGen *pParam)
-{
+void GENSIG_UpdateSignal(S_ParamGen *pParam) {
     //variable pour test > 65535(ValMaxADC)
     static uint32_t val;
-    
+
     uint8_t i = 0;
     float step = (((pParam->Amplitude) / MAX_ECH) * COEF);
-    switch (pParam->Forme)
-    {
-        // Calcul des echantillons pour le sinus 
-    case SignalSinus:
-        for (i = 0; i < MAX_ECH; i++)
-        {
-            tablEch[i] = (MIDPOINT - ((((pParam->Amplitude / 2) * sin(2 * M_PI * (i / (float) MAX_ECH)) + pParam->Offset) * COEF)));
-            // test pour écretage
-//            if (val >= ADC_MAX)
-//            {
-//                val = (MINAMPL + 1);
-//            }
-//            if (val <= MINAMPL)
-//            {
-//                val = (ADC_MAX - 1);
-//            }
-//            tablEch[i] = (uint16_t) val;
-        }
-        break;
-// Calcul des echantillons pour le signal triangle        
-    case SignalTriangle:
-        //step= (((pParam->Amplitude*2)/MAX_ECH/4) *COEF);
-        for (i = 0; i <= MAX_ECH; i++)
-        {
-            if (i < MAX_ECH / 2)
-            {
-                if (i < (MAX_ECH / 4))
-                {
-                    tablEch[i] = (uint32_t) ((MIDPOINT - ((((((pParam->Amplitude / 2 * COEF) - 1))) / (MAX_ECH / 4)) * i) - MIDPOINT / 4)+ (pParam->Offset * COEF));
-//                    // test pour écretage
-//                    if (val >= ADC_MAX)
-//                    {
-//                        val = (MINAMPL + 1);
-//                    }
-//                    if (val <= MINAMPL)
-//                    {
-//                        val = (ADC_MAX - 1);
-//                    }
-//                    tablEch[i] = (uint16_t) val;
+    switch (pParam->Forme) {
+            // Calcul des echantillons pour le sinus 
+        case SignalSinus:
+            for (i = 0; i < MAX_ECH; i++) {
+                val = (MIDPOINT - ((((pParam->Amplitude / 2) * sin(2 * M_PI * (i / (float) MAX_ECH)) + pParam->Offset) * COEF)));
+                // test pour écretage
+                if (val >= ADC_MAX) {
+                    val = (MINAMPL + 1);
                 }
-                else
-                {
-                    tablEch[i] = ((MIDPOINT - ((((((pParam->Amplitude / 2 * COEF) - 1))) / (MAX_ECH / 4)) * i) - MIDPOINT / 4)+ (pParam->Offset * COEF));
-                    // test pour écretage
-//                    if (val >= ADC_MAX)
-//                    {
-//                        val = (MINAMPL + 1);
-//                    }
-//                    if (val <= MINAMPL)
-//                    {
-//                        val = (ADC_MAX - 1);
-//                    }
-//                    tablEch[i] = (uint16_t) val;
+                if (val <= MINAMPL) {
+                    val = (ADC_MAX - 1);
                 }
+                tablEch[i] = (uint16_t) val;
             }
-            else
-            {
-                if (i < (3 * (MAX_ECH / 4)))
-                {
-                    tablEch[i] = ((MIDPOINT - ((((((pParam->Amplitude / 2 * COEF)) - 1) / (MAX_ECH / 4))*(MAX_ECH - i))) - MIDPOINT / 4)+ (pParam->Offset * COEF));
-                    // test pour écretage
-//                    if (val >= ADC_MAX)
-//                    {
-//                        val = (MINAMPL + 1);
-//                    }
-//                    if (val <= MINAMPL)
-//                    {
-//                        val = (ADC_MAX - 1);
-//                    }
-//                    tablEch[i] = (uint16_t) val;
+            break;
+            // Calcul des echantillons pour le signal triangle        
+        case SignalTriangle:
+            //step= (((pParam->Amplitude*2)/MAX_ECH/4) *COEF);
+            for (i = 0; i <= MAX_ECH; i++) {
+                if (i < MAX_ECH / 2) {
+                    if (i < (MAX_ECH / 4)) {
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * i) - (MIDPOINT / 4))));
+                       
+                    } else {
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * i) - (MIDPOINT / 4))));
+                       
+                    }
+                // Appliquer l'offset après le calcul de val
+                  
+                } else {
+                    if (i < (3 * (MAX_ECH / 4))) {
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * (MAX_ECH - i))) + (MIDPOINT / 4)));
+                        // Appliquer l'offset après le calcul de val
+                         
+                    } else {
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * (MAX_ECH - i)) - (MIDPOINT / 4))));
+                        // Appliquer l'offset après le calcul de val
+                          
+                    }
+                
                 }
-                else
-                {
-                    tablEch[i] = ((MIDPOINT - ((((((pParam->Amplitude / 2 * COEF)) - 1) / (MAX_ECH / 4))*(MAX_ECH - i)) + MIDPOINT / 4))+ (pParam->Offset * COEF));
-                    // test pour écretage
-//                    if (val >= ADC_MAX)
-//                    {
-//                        val = (MINAMPL + 1);
-//                    }
-//                    if (val <= MINAMPL)
-//                    {
-//                        val = (ADC_MAX - 1);
-//                    }
-//
-//                    tablEch[i] = (uint16_t) val;
+                val -= (pParam->Offset * COEF); 
+                
+                
+
+                // Test pour écretage
+                if (val >= ADC_MAX) {
+                    val = (MINAMPL + 1);
                 }
+                if (val <= MINAMPL) {
+                    val = (ADC_MAX - 1);
+                }
+
+                tablEch[i] = (uint16_t) val;
             }
-        }
-        break;
-    case SignalCarre:
-        for (i = 0; i < (MAX_ECH / 2); i++)
-        {
-            tablEch[i] = (MIDPOINT + ((((pParam->Amplitude * COEF) / 2))-(pParam->Offset * COEF)));
-            // test pour écretage
-//            if (val >= ADC_MAX)
-//            {
-//                val = (MINAMPL + 1);
-//            }
-//            if (val <= MINAMPL)
-//            {
-//                val = (ADC_MAX - 1);
-//            }
-//
-//            tablEch[i] = (uint16_t) val;
-        }
-        for (i = (MAX_ECH / 2); i < MAX_ECH; i++)
-        {
-            tablEch[i] = (MIDPOINT - ((((pParam->Amplitude * COEF) / 2))+(pParam->Offset * COEF)));
-            // test pour écretage
-//            if (val >= ADC_MAX)
-//            {
-//                val = (MINAMPL + 1);
-//            }
-//            if (val <= MINAMPL)
-//            {
-//                val = (ADC_MAX - 1);
-//            }
-//
-//            tablEch[i] = (uint16_t) val;
-        }
-        break;
-    case SignalDentDeScie:
-        for (i = 0; i < (MAX_ECH); i++)
-        {
-            tablEch[i] = (MIDPOINT - (float) (step * i)-(pParam->Offset * COEF)+(MAX_ECH * step) / 2);
-            // test pour écretage
-//            if (val >= ADC_MAX)
-//            {
-//                val = (MINAMPL + 1);
-//            }
-//            if (val <= MINAMPL)
-//            {
-//                val = (ADC_MAX - 1);
-//            }
-//            tablEch[i] = (uint16_t) val;
-        }
-        break;
-    }
-    for (i = 0; i < MAX_ECH; i++)
-    {
-        val = (uint32_t) tablEch[i];
-            // test pour écretage
-            if (val >= ADC_MAX)
-            {
-                val = (MINAMPL + 1);
+
+            break;
+        case SignalCarre:
+            for (i = 0; i < (MAX_ECH / 2); i++) {
+                val = (MIDPOINT + ((((pParam->Amplitude * COEF) / 2))-(pParam->Offset * COEF)));
+                // test pour écretage
+                if (val >= ADC_MAX) {
+                    val = (MINAMPL + 1);
+                }
+                if (val <= MINAMPL) {
+                    val = (ADC_MAX - 1);
+                }
+
+                tablEch[i] = (uint16_t) val;
             }
-            if (val <= MINAMPL)
-            {
-                val = (ADC_MAX - 1);
+            for (i = (MAX_ECH / 2); i < MAX_ECH; i++) {
+                val = (MIDPOINT - ((((pParam->Amplitude * COEF) / 2))+(pParam->Offset * COEF)));
+                // test pour écretage
+                if (val >= ADC_MAX) {
+                    val = (MINAMPL + 1);
+                }
+                if (val <= MINAMPL) {
+                    val = (ADC_MAX - 1);
+                }
+
+                tablEch[i] = (uint16_t) val;
             }
-            tablEch[i] = (uint16_t) val;
-      
+            break;
+        case SignalDentDeScie:
+            for (i = 0; i < (MAX_ECH); i++) {
+                val = (MIDPOINT - (float) (step * i)-(pParam->Offset * COEF)+(MAX_ECH * step) / 2);
+                // test pour écretage
+                if (val >= ADC_MAX) {
+                    val = (MINAMPL + 1);
+                }
+                if (val <= MINAMPL) {
+                    val = (ADC_MAX - 1);
+                }
+                tablEch[i] = (uint16_t) val;
+            }
+            break;
     }
 }
 // Fonction appelée dans Int timer3 (cycle variable variable)
 
 // Version provisoire pour test du DAC à modifier
 
-void GENSIG_Execute(void)
-{
+void GENSIG_Execute(void) {
     static uint16_t EchNb = 0;
 
-    
+
     SPI_WriteToDac(0, tablEch[EchNb]); // sur canal 0
     //    SPI_WriteToDac(0, Step * EchNb );      // sur canal 0
     EchNb++;

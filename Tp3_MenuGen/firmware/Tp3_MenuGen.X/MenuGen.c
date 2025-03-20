@@ -288,41 +288,33 @@ void MENU_Execute(S_ParamGen *pParam)
         {
             if (PushCnt > 0)
             {
-                if (PushCnt >= 200)
+                if (PushCnt >= 20)
                 {
                     // Sauvegarde dans la flash
-                    NVM_WriteBlock((uint32_t*) & pParam, sizeof (S_ParamGen));
-
-                    PushCnt = 0;
+                    NVM_WriteBlock((uint32_t*) pParam, sizeof (S_ParamGen));  
                     flagS9 = 1;
-
-                }
-                else if (Pec12IsESC() || Pec12IsMinus() || Pec12IsOK() || Pec12IsPlus())
-                {
-                    PushCnt = 0;
-                    flagS9 = 2;
                     Savecnt++;
 
-                }
-                else
-                {
-                    Savecnt++;
-                    PushCnt = 0;
-                    flagS9 = 2;
-                }
-
-                if ((Savecnt > 20))
-                {
-
-                    s_menu.menu = FormeSel;
-                    Savecnt = 0;
                 }
 
             }
-            else
+            if ((Pec12IsESC() || Pec12IsMinus() || Pec12IsOK() || Pec12IsPlus()))
             {
+                    PushCnt = 0;
+                    flagS9 = 2;
+                    Savecnt++;
+
+            }
+            
+
+            if ((Savecnt > 200) && ((flagS9 == 2)||(flagS9 == 1)))
+            {
+
+                s_menu.menu = FormeSel;
+                Savecnt = 0;
                 PushCnt = 0;
             }
+           
 
         }
         break;
@@ -385,11 +377,11 @@ void UpdateScreen(void)
         lcd_gotoxy(C1, L1);
         printf_lcd(" Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd(" Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd(" Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd("*Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd("*Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd(" Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd(" Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
 
         break;
 
@@ -397,11 +389,11 @@ void UpdateScreen(void)
         lcd_gotoxy(C1, L1);
         printf_lcd(" Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd(" Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd(" Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd("?Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd("?Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd(" Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd(" Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
 
         break;
 
@@ -410,64 +402,64 @@ void UpdateScreen(void)
         lcd_gotoxy(C1, L1);
         printf_lcd("*Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd(" Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd(" Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd(" Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd(" Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd(" Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd(" Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
         break;
     case FormeSet:
         lcd_gotoxy(C1, L1);
         printf_lcd("?Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd(" Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd(" Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd(" Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd(" Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd(" Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd(" Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
         break;
 
     case FreqSel:
         lcd_gotoxy(C1, L1);
         printf_lcd(" Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd("*Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd("*Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd(" Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd(" Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd(" Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd(" Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
         break;
 
     case FreqSet:
         lcd_gotoxy(C1, L1);
         printf_lcd(" Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd("?Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd("?Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd(" Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd(" Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd(" Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd(" Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
         break;
 
     case OffsetSel:
         lcd_gotoxy(C1, L1);
         printf_lcd(" Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, L2);
-        printf_lcd(" Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd(" Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd(" Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd(" Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd("*Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd("*Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
         break;
     case Offset7:
         lcd_gotoxy(C1, L1);
         printf_lcd(" Forme = %s", FormeSignaux[s_menu.reglageForme]); //affiche sur le LCD
         lcd_gotoxy(C1, 2);
-        printf_lcd(" Freq = %d", s_menu.reglageFreq); //affiche sur le LCD
+        printf_lcd(" Freq[Hz] = %d", s_menu.reglageFreq); //affiche sur le LCD
         lcd_gotoxy(C1, L3);
-        printf_lcd(" Ampl = %d", s_menu.reglageAmpl); //affiche sur le LCD
+        printf_lcd(" Ampl[mV] = %d", s_menu.reglageAmpl); //affiche sur le LCD
         lcd_gotoxy(C1, L4);
-        printf_lcd("?Offset = %d", s_menu.reglageOffset); //affiche sur le LCD
+        printf_lcd("?Offset[mV] = %d", s_menu.reglageOffset); //affiche sur le LCD
         break;
     case Save:
         switch (flagS9)

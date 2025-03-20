@@ -158,13 +158,14 @@ void APP_Tasks ( void )
 
             // Initialisation PEC12
             Pec12Init();
-            
+            // Initialisation du generateur
+            GENSIG_Initialize(&LocalParamGen);
             // Initialisation du menu
             MENU_Initialize(&LocalParamGen);
 
-            // Initialisation du generateur
-            GENSIG_Initialize(&LocalParamGen);
             
+            GENSIG_UpdatePeriode(&LocalParamGen);
+            GENSIG_UpdateSignal(&LocalParamGen);
             printf_lcd("Tp3 GenSig 24-25");
             // A adapter pour les 2 noms sur 2 lignes
             lcd_gotoxy(C1,L2);

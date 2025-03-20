@@ -147,7 +147,7 @@
         <itemPath>Mc32gestSPiDac.c</itemPath>
         <itemPath>MenuGen.c</itemPath>
         <itemPath>../src/app.c</itemPath>
-        <itemPath>../../../../TP3_MenuGen/Tp3_MenuGen/firmware/src/main.c</itemPath>
+        <itemPath>../src/main.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="bsp" projectFiles="true">
         <logicalFolder name="f1" displayName="pic32mx_skes" projectFiles="true">
