@@ -27,8 +27,8 @@
 // SPI_ID_1 correspond au SPI1 !
 #define KitSpi1 (SPI_ID_1)
 
-uint32_t ConfigReg;     // pour lecture de SPI1CON
-uint32_t BaudReg;       // pour lecture de SPI1BRG
+uint32_t ConfigReg; // pour lecture de SPI1CON
+uint32_t BaudReg; // pour lecture de SPI1BRG
 
 // Initialisation de la communication SPI et du DAC
 // ------------------------------------------------
@@ -45,111 +45,111 @@ uint32_t BaudReg;       // pour lecture de SPI1BRG
 
 
 //Initialisation du SPI pour utilisation avec DAC LTC2604
-void SPI_ConfigureLTC2604(void)
-{
-   PLIB_SPI_Disable(KitSpi1);
 
-   PLIB_SPI_BufferClear(KitSpi1);
-   PLIB_SPI_StopInIdleDisable(KitSpi1);
-   PLIB_SPI_PinEnable(KitSpi1, SPI_PIN_DATA_OUT);
-   PLIB_SPI_CommunicationWidthSelect(KitSpi1, SPI_COMMUNICATION_WIDTH_8BITS);
-   // Config SPI clock à 20 MHz 
-   PLIB_SPI_BaudRateSet(KitSpi1, SYS_CLK_PeripheralFrequencyGet(CLK_BUS_PERIPHERAL_1), 20000000);
-   // Config polarité traitement des signaux SPI
-   // pour input à confirmer
-   // Polarité clock OK
-   // Phase output à confirmer
-   PLIB_SPI_InputSamplePhaseSelect(KitSpi1, SPI_INPUT_SAMPLING_PHASE_IN_MIDDLE );
-   PLIB_SPI_ClockPolaritySelect(KitSpi1, SPI_CLOCK_POLARITY_IDLE_HIGH);
-   PLIB_SPI_OutputDataPhaseSelect(KitSpi1, SPI_OUTPUT_DATA_PHASE_ON_IDLE_TO_ACTIVE_CLOCK);
-   PLIB_SPI_MasterEnable(KitSpi1);
-   PLIB_SPI_FramedCommunicationDisable(KitSpi1);
-   PLIB_SPI_FIFOEnable(KitSpi1);     // Enhenced buffer mode
+void SPI_ConfigureLTC2604(void) {
+    PLIB_SPI_Disable(KitSpi1);
 
-   PLIB_SPI_Enable(KitSpi1);
+    PLIB_SPI_BufferClear(KitSpi1);
+    PLIB_SPI_StopInIdleDisable(KitSpi1);
+    PLIB_SPI_PinEnable(KitSpi1, SPI_PIN_DATA_OUT);
+    PLIB_SPI_CommunicationWidthSelect(KitSpi1, SPI_COMMUNICATION_WIDTH_8BITS);
+    // Config SPI clock à 20 MHz 
+    PLIB_SPI_BaudRateSet(KitSpi1, SYS_CLK_PeripheralFrequencyGet(CLK_BUS_PERIPHERAL_1), 20000000);
+    // Config polarité traitement des signaux SPI
+    // pour input à confirmer
+    // Polarité clock OK
+    // Phase output à confirmer
+    PLIB_SPI_InputSamplePhaseSelect(KitSpi1, SPI_INPUT_SAMPLING_PHASE_IN_MIDDLE);
+    PLIB_SPI_ClockPolaritySelect(KitSpi1, SPI_CLOCK_POLARITY_IDLE_HIGH);
+    PLIB_SPI_OutputDataPhaseSelect(KitSpi1, SPI_OUTPUT_DATA_PHASE_ON_IDLE_TO_ACTIVE_CLOCK);
+    PLIB_SPI_MasterEnable(KitSpi1);
+    PLIB_SPI_FramedCommunicationDisable(KitSpi1);
+    PLIB_SPI_FIFOEnable(KitSpi1); // Enhenced buffer mode
 
-   // Contrôle le la configuration
-   ConfigReg = SPI1CON;
-   BaudReg = SPI1BRG;
+    PLIB_SPI_Enable(KitSpi1);
+
+    // Contrôle le la configuration
+    ConfigReg = SPI1CON;
+    BaudReg = SPI1BRG;
 }
 
 // Initialisation des signaux de controle du DAC, reset du DAC, puis config. du periph. SPI
-void SPI_InitLTC2604(void)
-{  
-    TRISDbits.TRISD4 = 0;   //SPI-CS_DA en sortie (RD4)
-    TRISDbits.TRISD9 = 0;   //DAC_CLR en sortie (RD9)       
-    
-   //Initialisation SPI DAC
-   CS_DAC = 1;
-   // Impulsion reset du DAC
-   DAC_CLEAR = 0;
-   delay_us(500);
-   DAC_CLEAR = 1;
 
-   // LTC2604 MAX 50 MHz choix 20 MHz
-   SPI_ConfigureLTC2604();
+void SPI_InitLTC2604(void) {
+    TRISDbits.TRISD4 = 0; //SPI-CS_DA en sortie (RD4)
+    TRISDbits.TRISD9 = 0; //DAC_CLR en sortie (RD9)       
+
+    //Initialisation SPI DAC
+    CS_DAC = 1;
+    // Impulsion reset du DAC
+    DAC_CLEAR = 0;
+    delay_us(500);
+    DAC_CLEAR = 1;
+
+    // LTC2604 MAX 50 MHz choix 20 MHz
+    SPI_ConfigureLTC2604();
 }
 
 // Envoi d'une valeur sur le DAC  LTC2604
 // Sans reconfiguration du SPI
 // Indication du canal 0 à 3
-void SPI_WriteToDac(uint8_t NoCh, uint16_t DacVal)
-{
-   //Déclaration des variables
-   uint8_t MSB;
-   uint8_t LSB;
-   
-   //Sélection du canal
-   //3 -> Set and Update, 0/1/2/3 Sélection canal A/B/C/D, F tous canaux
-   NoCh = NoCh + 0x30;
 
-   // Selon canal
-   MSB =  DacVal >> 8;
-   LSB =  DacVal;
+void SPI_WriteToDac(uint8_t NoCh, uint16_t DacVal) {
+    //Déclaration des variables
+    uint8_t MSB;
+    uint8_t LSB;
 
-   CS_DAC = 0;
-   spi_write1(NoCh);
-   spi_write1(MSB);
-   spi_write1(LSB);
- 
-   //Fin de transmission
-   CS_DAC = 1;
+    //Sélection du canal
+    //3 -> Set and Update, 0/1/2/3 Sélection canal A/B/C/D, F tous canaux
+    NoCh = NoCh + 0x30;
+
+    // Selon canal
+    MSB = DacVal >> 8;
+    LSB = DacVal;
+
+    CS_DAC = 0;
+    spi_write1(NoCh);
+    spi_write1(MSB);
+    spi_write1(LSB);
+
+    //Fin de transmission
+    CS_DAC = 1;
 
 } // SPI_WriteToDac
-   
+
 
 // Envoi d'une valeur sur le DAC  LTC2604
 // Avec reconfiguration du SPI
 // Indication du canal 0 à 3
-void SPI_CfgWriteToDac(uint8_t NoCh, uint16_t DacVal)
-{
-   //Déclaration des variables
-   uint8_t MSB;
-   uint8_t LSB;
 
-   // Reconfiguration du SPI
-   SPI_ConfigureLTC2604();
+void SPI_CfgWriteToDac(uint8_t NoCh, uint16_t DacVal) {
+    //Déclaration des variables
+    uint8_t MSB;
+    uint8_t LSB;
 
-   //Sélection du canal
-   //3 -> Set and Update, 0/1/2/3 Sélection canal A/B/C/D, F tous canaux
-   NoCh = NoCh + 0x30;
+    // Reconfiguration du SPI
+    SPI_ConfigureLTC2604();
 
-   // Selon canal
-   MSB =  DacVal >> 8;
-   LSB =  DacVal;
+    //Sélection du canal
+    //3 -> Set and Update, 0/1/2/3 Sélection canal A/B/C/D, F tous canaux
+    NoCh = NoCh + 0x30;
 
-   CS_DAC = 0;
-   spi_write1(NoCh);
-   spi_write1(MSB);
-   spi_write1(LSB);
+    // Selon canal
+    MSB = DacVal >> 8;
+    LSB = DacVal;
 
-   // Fin de transmission
-   CS_DAC = 1;
+    CS_DAC = 0;
+    spi_write1(NoCh);
+    spi_write1(MSB);
+    spi_write1(LSB);
+
+    // Fin de transmission
+    CS_DAC = 1;
 
 } // SPI_CfgWriteToDac
 
 
- 
+
 
 
 

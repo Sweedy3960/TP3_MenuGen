@@ -52,49 +52,46 @@ const uint8_t MaxDebounceCount = 5;
 //           si elle l'utilise
 //
 
-void DoDebounce (S_SwitchDescriptor *Descriptor, bool InputValue)
-{
-   bool PrevInputValue;
-   s_bits tmp;
-   
-   tmp = Descriptor->bits;
-    
-   
-   // Traitement selon état du mécanisme
-   switch (Descriptor->DebounceState)
-   {
-      case DebounceWaitChange :
-      PrevInputValue = tmp.KeyPrevInputValue;
-         if ( ! (InputValue == PrevInputValue) ) {
-               tmp.KeyPrevInputValue = InputValue;
-               Descriptor->DebounceState = DebounceWaitStable;
-          }
-      break;
+void DoDebounce(S_SwitchDescriptor *Descriptor, bool InputValue) {
+    bool PrevInputValue;
+    s_bits tmp;
 
-      case DebounceWaitStable :
-         PrevInputValue = tmp.KeyPrevInputValue;
-         if ( InputValue == PrevInputValue )
-         {
-              Descriptor->DebounceCounter++;
-              if (Descriptor->DebounceCounter >= MaxDebounceCount)  {
-                  // mise à jour du nouvel état
-                  tmp.KeyValue = InputValue;
-                  if (tmp.KeyValue == 0) {
-                     tmp.KeyPressed = 1;
-                  } else {
-                     tmp.KeyReleased = 1;
-                  }
-                  Descriptor->DebounceState = DebounceWaitChange;
-                  Descriptor->DebounceCounter = 0;
-               }
-          } else {
-            Descriptor->DebounceCounter = 0;
-            tmp.KeyPrevInputValue = InputValue;
-         }
-      break;
-   }
-   Descriptor->bits = tmp;
- } // end DoDebounce
+    tmp = Descriptor->bits;
+
+
+    // Traitement selon état du mécanisme
+    switch (Descriptor->DebounceState) {
+        case DebounceWaitChange:
+            PrevInputValue = tmp.KeyPrevInputValue;
+            if (!(InputValue == PrevInputValue)) {
+                tmp.KeyPrevInputValue = InputValue;
+                Descriptor->DebounceState = DebounceWaitStable;
+            }
+            break;
+
+        case DebounceWaitStable:
+            PrevInputValue = tmp.KeyPrevInputValue;
+            if (InputValue == PrevInputValue) {
+                Descriptor->DebounceCounter++;
+                if (Descriptor->DebounceCounter >= MaxDebounceCount) {
+                    // mise à jour du nouvel état
+                    tmp.KeyValue = InputValue;
+                    if (tmp.KeyValue == 0) {
+                        tmp.KeyPressed = 1;
+                    } else {
+                        tmp.KeyReleased = 1;
+                    }
+                    Descriptor->DebounceState = DebounceWaitChange;
+                    Descriptor->DebounceCounter = 0;
+                }
+            } else {
+                Descriptor->DebounceCounter = 0;
+                tmp.KeyPrevInputValue = InputValue;
+            }
+            break;
+    }
+    Descriptor->bits = tmp;
+} // end DoDebounce
 
 /********************************************************************************************/
 // DebounceInit (S_SwitchDescriptor *pDescriptor) :
@@ -104,36 +101,41 @@ void DoDebounce (S_SwitchDescriptor *Descriptor, bool InputValue)
 // Entrée: un pointeur sur la structure du switch
 //
 
-void DebounceInit (S_SwitchDescriptor *pDescriptor) {
-   pDescriptor->DebounceState     = DebounceWaitChange;   // état de l'antirebond
-   pDescriptor->DebounceCounter   = 0;
-   pDescriptor->bits.KeyPressed        = 0;
-   pDescriptor->bits.KeyReleased       = 0;
-   pDescriptor->bits.KeyPrevInputValue = 1;
-   pDescriptor->bits.KeyValue          = 1;
+void DebounceInit(S_SwitchDescriptor *pDescriptor) {
+    pDescriptor->DebounceState = DebounceWaitChange; // état de l'antirebond
+    pDescriptor->DebounceCounter = 0;
+    pDescriptor->bits.KeyPressed = 0;
+    pDescriptor->bits.KeyReleased = 0;
+    pDescriptor->bits.KeyPrevInputValue = 1;
+    pDescriptor->bits.KeyValue = 1;
 }
 
 //  DebounceGetInput  fourni l'état du switch aprés anti-rebond
-bool DebounceGetInput (S_SwitchDescriptor *pDescriptor) {
-   return (pDescriptor->bits.KeyValue);
+
+bool DebounceGetInput(S_SwitchDescriptor *pDescriptor) {
+    return (pDescriptor->bits.KeyValue);
 }
 
 //  DebounceIsPressed    true indique que l'on vient de presser la touche
-bool DebounceIsPressed (S_SwitchDescriptor *pDescriptor) {
-   return (pDescriptor->bits.KeyPressed);
+
+bool DebounceIsPressed(S_SwitchDescriptor *pDescriptor) {
+    return (pDescriptor->bits.KeyPressed);
 }
 
 //  DebounceIsReleased   true indique que l'on vient de relacher la touche
-bool DebounceIsReleased (S_SwitchDescriptor *pDescriptor) {
-   return (pDescriptor->bits.KeyReleased);
+
+bool DebounceIsReleased(S_SwitchDescriptor *pDescriptor) {
+    return (pDescriptor->bits.KeyReleased);
 }
 
 //  DebounceClearPressed    annule indication de pression sur la touche
-void DebounceClearPressed  (S_SwitchDescriptor *pDescriptor) {
-   pDescriptor->bits.KeyPressed = 0;
+
+void DebounceClearPressed(S_SwitchDescriptor *pDescriptor) {
+    pDescriptor->bits.KeyPressed = 0;
 }
 
 //  DebounceClearReleased   annule indication de relachement de la touche
-void DebounceClearReleased  (S_SwitchDescriptor *pDescriptor) {
-   pDescriptor->bits.KeyReleased = 0;
+
+void DebounceClearReleased(S_SwitchDescriptor *pDescriptor) {
+    pDescriptor->bits.KeyReleased = 0;
 }

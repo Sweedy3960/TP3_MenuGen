@@ -25,7 +25,8 @@
 #define MINAMPL 0
 #define MINFREQ 20
 #define MINOFF -5000
-
+#define _200MS 20
+#define _2S   200
 #define _5V 5000
 #define _20Hz 20
 #define L1 1

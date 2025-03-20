@@ -18,10 +18,7 @@
 #include "stdint.h"
 
 // T.P. 2016 100 echantillons
-#define MAX_ECH 100
 
-#define FCLK 800000
-#define PER 1.25
 static uint16_t tablEch[100] = {0};
 // Initialisation du  générateur
 
@@ -31,6 +28,7 @@ void GENSIG_Initialize(S_ParamGen *pParam) {
 
     //test de la sauvegarde
     if (ValInit.Magic != MAGIC) {
+        //assignation des valeurs
         pParam->Forme = SignalSinus;
         pParam->Frequence = 1000;
         pParam->Amplitude = 5000;
@@ -47,7 +45,7 @@ void GENSIG_Initialize(S_ParamGen *pParam) {
 
 void GENSIG_UpdatePeriode(S_ParamGen *pParam) {
     //modifie la valeur de periode du registe timer3 
-    PLIB_TMR_Period16BitSet(TMR_ID_3, (uint16_t)((uint64_t)( FCLK / pParam->Frequence)));
+    PLIB_TMR_Period16BitSet(TMR_ID_3, (uint16_t) ((uint64_t) (FCLK / pParam->Frequence)));
 }
 
 // Mise à jour du signal (forme, amplitude, offset)
@@ -79,29 +77,24 @@ void GENSIG_UpdateSignal(S_ParamGen *pParam) {
             for (i = 0; i <= MAX_ECH; i++) {
                 if (i < MAX_ECH / 2) {
                     if (i < (MAX_ECH / 4)) {
-                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * i) - (MIDPOINT / 4))));
-                       
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF)) / (MAX_ECH / 4)) * i) - (MIDPOINT / 4))));
+
                     } else {
-                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * i) - (MIDPOINT / 4))));
-                       
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF)) / (MAX_ECH / 4)) * i) -(MIDPOINT / 4))));
+
                     }
-                // Appliquer l'offset après le calcul de val
-                  
+
+
                 } else {
                     if (i < (3 * (MAX_ECH / 4))) {
-                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * (MAX_ECH - i))) + (MIDPOINT / 4)));
-                        // Appliquer l'offset après le calcul de val
-                         
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF)) / (MAX_ECH / 4)) * (MAX_ECH - i))) + (MIDPOINT / 4)));
                     } else {
-                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF) ) / (MAX_ECH / 4)) * (MAX_ECH - i)) - (MIDPOINT / 4))));
-                        // Appliquer l'offset après le calcul de val
-                          
+                        val = (uint32_t) ((MIDPOINT - (((((pParam->Amplitude / 2 * COEF)) / (MAX_ECH / 4)) * (MAX_ECH - i)) - (MIDPOINT / 4))));
                     }
-                
+
                 }
-                val -= (pParam->Offset * COEF); 
-                
-                
+                // appliquer l'offset au résultat 
+                val -= (pParam->Offset * COEF);
 
                 // Test pour écretage
                 if (val >= ADC_MAX) {

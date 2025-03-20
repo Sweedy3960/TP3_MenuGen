@@ -23,64 +23,62 @@
 #include "Mc32SpiUtil.h"
 #include "peripheral\SPI\plib_spi.h"
 
+void spi_write1(uint8_t Val) {
+    int SpiBusy;
 
-void spi_write1( uint8_t Val){
-   int SpiBusy;
-   
-   PLIB_SPI_BufferWrite(SPI_ID_1, Val);
+    PLIB_SPI_BufferWrite(SPI_ID_1, Val);
 
-   do {
-     SpiBusy =  PLIB_SPI_IsBusy(SPI_ID_1) ;
-   } while (SpiBusy == 1);
+    do {
+        SpiBusy = PLIB_SPI_IsBusy(SPI_ID_1);
+    } while (SpiBusy == 1);
 }
 
+void spi_write2(uint8_t Val) {
+    int SpiBusy;
 
-void spi_write2( uint8_t Val){
-   int SpiBusy;
-   
-   PLIB_SPI_BufferWrite(SPI_ID_2, Val);
-   do {
-     SpiBusy =  PLIB_SPI_IsBusy(SPI_ID_2) ;
-   } while (SpiBusy == 1);
+    PLIB_SPI_BufferWrite(SPI_ID_2, Val);
+    do {
+        SpiBusy = PLIB_SPI_IsBusy(SPI_ID_2);
+    } while (SpiBusy == 1);
 }
 
-uint8_t spi_read1( uint8_t Val){
-   int SpiBusy;  
-   uint32_t lu;
-   
-   PLIB_SPI_BufferWrite(SPI_ID_1, Val);
-   // Attends fin transmission
-   do {
-        SpiBusy =  PLIB_SPI_IsBusy(SPI_ID_1) ;
-   } while (SpiBusy == 1);
-   
-   // Attend arrivée dans fifo
-   while (PLIB_SPI_ReceiverFIFOIsEmpty(SPI_ID_1));
+uint8_t spi_read1(uint8_t Val) {
+    int SpiBusy;
+    uint32_t lu;
+
+    PLIB_SPI_BufferWrite(SPI_ID_1, Val);
+    // Attends fin transmission
+    do {
+        SpiBusy = PLIB_SPI_IsBusy(SPI_ID_1);
+    } while (SpiBusy == 1);
+
+    // Attend arrivée dans fifo
+    while (PLIB_SPI_ReceiverFIFOIsEmpty(SPI_ID_1));
 #ifdef MARKER_READ
-   LED3_W  = 1;
+    LED3_W = 1;
 #endif
-   lu = PLIB_SPI_BufferRead(SPI_ID_1);
+    lu = PLIB_SPI_BufferRead(SPI_ID_1);
 #ifdef MARKER_READ
-   LED3_W  = 0;
+    LED3_W = 0;
 #endif
-   return lu;
+    return lu;
 }
 
- uint8_t spi_read2( uint8_t Val){
-   int SpiBusy;
-   uint8_t lu;
-   
-   PLIB_SPI_BufferWrite(SPI_ID_2, Val);
-  
-   do {
-      SpiBusy =  PLIB_SPI_IsBusy(SPI_ID_2) ;
-   } while (SpiBusy == 1);
-   
-   // Attend arrivée dans fifo
-   while (PLIB_SPI_ReceiverFIFOIsEmpty(SPI_ID_2));
-   
-   lu = PLIB_SPI_BufferRead(SPI_ID_2);
-   return lu;
+uint8_t spi_read2(uint8_t Val) {
+    int SpiBusy;
+    uint8_t lu;
+
+    PLIB_SPI_BufferWrite(SPI_ID_2, Val);
+
+    do {
+        SpiBusy = PLIB_SPI_IsBusy(SPI_ID_2);
+    } while (SpiBusy == 1);
+
+    // Attend arrivée dans fifo
+    while (PLIB_SPI_ReceiverFIFOIsEmpty(SPI_ID_2));
+
+    lu = PLIB_SPI_BufferRead(SPI_ID_2);
+    return lu;
 }
 
 

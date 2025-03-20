@@ -80,7 +80,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
     This structure should be initialized by the APP_Initialize function.
     
     Application strings and buffers are be defined outside this structure.
-*/
+ */
 
 
 APP_DATA appData;
@@ -96,7 +96,7 @@ S_Pec12_Descriptor S9;
 // *****************************************************************************
 
 /* TODO:  Add any necessary callback funtions.
-*/
+ */
 
 
 // *****************************************************************************
@@ -106,7 +106,7 @@ S_Pec12_Descriptor S9;
 // *****************************************************************************
 
 /* TODO:  Add any necessary local functions.
-*/
+ */
 
 
 // *****************************************************************************
@@ -123,16 +123,14 @@ S_Pec12_Descriptor S9;
     See prototype in app.h.
  */
 
-void APP_Initialize ( void )
-{
+void APP_Initialize(void) {
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
-    
+
     /* TODO: Initialize your application's state machine and other
      * parameters.
      */
 }
-
 
 /******************************************************************************
   Function:
@@ -142,12 +140,10 @@ void APP_Initialize ( void )
     See prototype in app.h.
  */
 
-void APP_Tasks ( void )
-{
+void APP_Tasks(void) {
     /* Check the application's current state. */
-    switch ( appData.state )
-    {
-        /* Application's initial state. */
+    switch (appData.state) {
+            /* Application's initial state. */
         case APP_STATE_INIT:
         {
             lcd_init();
@@ -163,12 +159,13 @@ void APP_Tasks ( void )
             // Initialisation du menu
             MENU_Initialize(&LocalParamGen);
 
-            
+            //premier calcul de valeurs
             GENSIG_UpdatePeriode(&LocalParamGen);
             GENSIG_UpdateSignal(&LocalParamGen);
+            //affichage init 
             printf_lcd("Tp3 GenSig 24-25");
             // A adapter pour les 2 noms sur 2 lignes
-            lcd_gotoxy(C1,L2);
+            lcd_gotoxy(C1, L2);
             printf_lcd("Clauzel ");
 
             // Active les timers 
@@ -177,24 +174,24 @@ void APP_Tasks ( void )
             appData.state = APP_STATE_WAIT;
             break;
         }
-        case APP_STATE_WAIT :
-          // nothing to do
-        break;
+        case APP_STATE_WAIT:
+            // nothing to do
+            break;
 
-       case APP_STATE_SERVICE_TASKS:
-           
+        case APP_STATE_SERVICE_TASKS:
+
             BSP_LEDToggle(BSP_LED_2);
-            
-            
-            
+
+
+
             // Execution du menu
             MENU_Execute(&LocalParamGen);
-            
-            appData.state = APP_STATE_WAIT;
-         break;
-        /* TODO: implement your application state machine.*/
 
-        /* The default state should never be executed. */
+            appData.state = APP_STATE_WAIT;
+            break;
+            /* TODO: implement your application state machine.*/
+
+            /* The default state should never be executed. */
         default:
         {
             /* TODO: Handle error in application's state machine. */
@@ -203,29 +200,28 @@ void APP_Tasks ( void )
     }
 }
 
-void APP_UpdateState ( APP_STATES NewState )
-{
+void APP_UpdateState(APP_STATES NewState) {
     appData.state = NewState;
 }
+
 void APP_Timer1CallBack(void) {
 
-    static int16_t cntCycles =0;
+    static int16_t cntCycles = 0;
     //ScanPec12(state A, State b stace PB)
     LED1_W = !LED1_R;
-  
+
     // pec12
-    ScanPec12(PEC12_A,PEC12_B,PEC12_PB);
-    // compteur qui gere le temps d'init
+    ScanPec12(PEC12_A, PEC12_B, PEC12_PB);
+    // compteur qui gere le temps d'init pour 3s puis 
     cntCycles++;
-    if (cntCycles >= TEMP_INIT) 
-    {
-        
+    if (cntCycles >= TEMP_INIT) {
         cntCycles = (TEMP_INIT - TEMP_DELAY);
         APP_UpdateState(APP_STATE_SERVICE_TASKS);
     }
 
 
 }
+
 void APP_Timer3CallBack(void) {
 
     LED0_W = 1;

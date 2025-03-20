@@ -16,6 +16,9 @@
 #define REG_MAX 10000
 #define COEF    3.27675
 #define COEF2    6.5535
+#define MAX_ECH 100
+#define FCLK 800000
+#define PER 1.25
 // Initialisation du  générateur
 void  GENSIG_Initialize(S_ParamGen *pParam);
 
